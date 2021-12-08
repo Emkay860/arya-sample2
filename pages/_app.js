@@ -1,7 +1,17 @@
-import '../styles/globals.css'
+import '../styles/globals.css';
+import '../src/scripts';
+import '../src/styles';
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+function SafeHydrate({ children }) {
+  return (
+    <div suppressHydrationWarning>
+      {typeof window === 'undefined' ? null : children}
+    </div>
+  );
 }
 
-export default MyApp
+function MyApp({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+
+export default MyApp;

@@ -21,34 +21,39 @@ const scripts = [
     body: '!function(o,c){var n=c.documentElement,t=" w-mod-";n.className+=t+"js",("ontouchstart"in o||o.DocumentTouch&&c instanceof DocumentTouch)&&(n.className+=t+"touch")}(window,document);',
     isAsync: false,
   },
-]
+];
 
-const loadingScripts = scripts.concat(null).reduce((active, next) => Promise.resolve(active).then((active) => {
-  const scriptEl = document.createElement('script')
-  scriptEl.type = 'text/javascript'
-  let loading
+const loadingScripts = scripts.concat(null).reduce((active, next) =>
+  Promise.resolve(active).then((active) => {
+    if (typeof window !== 'undefined') {
+      const scriptEl = document.createElement('script');
+      scriptEl.type = 'text/javascript';
+      let loading;
 
-  if (active.type == 'src') {
-    scriptEl.src = active.body
+      if (active.type == 'src') {
+        scriptEl.src = active.body;
 
-    loading = new Promise((resolve, reject) => {
-      scriptEl.onload = resolve
-      scriptEl.onerror = reject
+        loading = new Promise((resolve, reject) => {
+          scriptEl.onload = resolve;
+          scriptEl.onerror = reject;
 
-      return next
-    })
-  }
-  else {
-    scriptEl.innerHTML = active.body
+          return next;
+        });
+      } else {
+        scriptEl.innerHTML = active.body;
 
-    loading = next
-  }
+        loading = next;
+      }
 
-  document.head.appendChild(scriptEl)
+      document.head.appendChild(scriptEl);
 
-  return active.isAsync ? next : loading
-}))
+      return active.isAsync ? next : loading;
+    } else {
+      return;
+    }
+  })
+);
 
-export default loadingScripts
+export default loadingScripts;
 
 /* eslint-enable */
